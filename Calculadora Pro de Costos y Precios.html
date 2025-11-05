@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculadora DIRCO — Costos y Precio de Venta</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #fbfbfb;
+      --txt: #111827;
+      --muted: #6b7280;
+      --accent: #FF6A00;
+      /* DIRCO accent */
+      --accent-dark: #e05a00;
+      --success: #10b981;
+      --danger: #ef4444;
+      --glass: rgba(0, 0, 0, 0.04);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
+      color: var(--txt);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 28px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 6px 18px rgba(255, 106, 0, 0.12);
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0
+    }
+
+    p.lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    @media(max-width:980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        order: 2
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(12, 18, 30, 0.04);
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px
+    }
+
+    input[type="number"],
+    select,
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #e6e9ef;
+      font-size: 14px;
+      background: white;
+      color: var(--txt);
+    }
+
+    .row {
+      display: flex;
+      gap: 12px
+    }
+
+    .col {
+      flex: 1
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: 0;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn.secondary {
+      background: #f3f4f6;
+      color: var(--txt);
+      border: 1px solid #e6e9ef
+    }
+
+    .result {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent)
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #f1f3f7;
+      text-align: left
+    }
+
+    .history-empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 18px
+    }
+
+    .tech-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px
+    }
+
+    footer {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .flex {
+      display: flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    .badge {
+      background: var(--glass);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    /* small helpers */
+    .mt8 {
+      margin-top: 8px
+    }
+
+    .mt12 {
+      margin-top: 12px
+    }
+
+    .mb12 {
+      margin-bottom: 12px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">DIRCO</div>
+      <div>
+        <h1>Calculadora DIRCO — Costos & Precio de Venta</h1>
+        <p class="lead">Rapida, offline y lista para tu taller. Introduce tus costos y obtén precios sugeridos.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3>1. Datos del producto</h3>
+          <div class="mt8">
+            <label>Nombre del producto</label>
+            <input id="productName" type="text" placeholder="Ej: Camiseta poliéster blanca">
+          </div>
+
+          <div class="mt8 row">
+            <div class="col">
+              <label>Costo base del insumo (unidad)</label>
+              <input id="costBase" type="number" min="0" step="0.01" value="8.00">
+            </div>
+            <div class="col">
+              <label>Costo papel / film por unidad</label>
+              <input id="costPaper" type="number" min="0" step="0.01" value="0.50">
+            </div>
+          </div>
+
+          <div class="mt8 row">
+            <div class="col">
+              <label>Consumo de tinta por unidad (ml)</label>
+              <input id="tintaMl" type="number" min="0" step="0.1" value="5">
+            </div>
+            <div class="col">
+              <label>Costo tinta por ml</label>
+              <input id="costTintaMl" type="number" min="0" step="0.01" value="0.10">
+            </div>
+          </div>
+
+          <div class="mt8 row">
+            <div class="col">
+              <label>Tiempo de trabajo (minutos)</label>
+              <input id="timeMin" type="number" min="0" step="1" value="12">
+            </div>
+            <div class="col">
+              <label>Costo mano de obra por hora</label>
+              <input id="costLaborHour" type="number" min="0" step="0.01" value="8.00">
+            </div>
+          </div>
+
+          <div class="mt8 row">
+            <div class="col">
+              <label>Costo energía por hora</label>
+              <input id="costEnergyHour" type="number" min="0" step="0.01" value="0.50">
+            </div>
+            <div class="col">
+              <label>Costos adicionales por unidad</label>
+              <input id="otherCost" type="number" min="0" step="0.01" value="0.20">
+            </div>
+          </div>
+
+          <div class="mt12">
+            <label>Técnica</label>
+            <select id="technique">
+              <option value="sublimation">Sublimación (estándar)</option>
+              <option value="dtf">DTF (versátil)</option>
+              <option value="dtf-v">DTF-V (premium)</option>
+              <option value="vinyl">Vinilo textil</option>
+            </select>
+            <div class="tech-note">Cada técnica aplica un coeficiente que ajusta costos y acabado.</div>
+          </div>
+
+          <div class="mt12">
+            <label>Margen de ganancia (%)</label>
+            <input id="marginPct" type="number" min="0" step="1" value="30">
+            <div class="small mt8">Puedes usar este porcentaje para generar el precio sugerido.</div>
+          </div>
+
+          <div class="mt12 flex">
+            <button class="btn" id="calcBtn">Calcular precio</button>
+            <button class="btn secondary" id="saveBtn">Guardar en historial</button>
+            <button class="btn secondary" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="mt12">
+            <div class="small">Resultado:</div>
+            <div class="mt8">
+              <div>Coste por unidad: <span id="unitCost" class="result">--</span></div>
+              <div class="mt8">Precio sugerido (margen): <span id="priceSuggested" class="result">--</span></div>
+              <div class="mt8 small">Precios recomendados: <span id="priceRec" class="small">--</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card mt12">
+          <h3>Exportar / Historial</h3>
+          <div class="mt8">
+            <button class="btn" id="exportCsv">Exportar historial (CSV)</button>
+            <button class="btn secondary" id="clearHistory">Borrar historial</button>
+          </div>
+
+          <div class="mt12">
+            <div class="small">Historial de cálculos</div>
+            <div id="historyWrap" class="mt8">
+              <div class="history-empty">No hay cálculos guardados.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="side">
+        <div class="card">
+          <h3>Guía rápida</h3>
+          <ol class="small">
+            <li>Completa costos reales (materiales, tinta, tiempo).</li>
+            <li>Elige la técnica y tu margen.</li>
+            <li>Exporta tu CSV</li>
+
+          </ol>
+
+          <div class="mt12">
+            <h4>Fórmulas usadas</h4>
+            <div class="small mt8">
+              <div>Consumo tinta = tinta_ml * costo_tinta_ml</div>
+              <div>Labor por unidad = (tiempo_min / 60) * costo_mano_obra_hora</div>
+              <div>Energia por unidad = (tiempo_min / 60) * costo_energia_hora</div>
+              <div>Coste base = base + papel + tinta + labor + energia + otros</div>
+              <div>Aplicar coeficiente por técnica y luego margen</div>
+            </div>
+          </div>
+
+          <div class="mt12">
+            <h4>Notas DIRCO</h4>
+            <div class="small mt8">
+              - Si usas valores estimados, haz una prueba real antes de fijar precios.<br>
+              - Ajusta márgenes por tipo de cliente (B2B vs retail).
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt12">
+          <h3>Historial rápido</h3>
+          <div class="small mt8" id="quickLast">Sin cálculos recientes</div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Calculadora DIRCO • Diseña. Sublima. Emprende.
+    </footer>
+  </div>
+
+  <script>
+    /*
+      Calculadora DIRCO
+      - Guarda historial en localStorage (key: dirco_calcs)
+      - Exporta CSV
+      - Simple, audit-friendly formulas
+    */
+
+    const Q = selector => document.querySelector(selector);
+    const format = v => Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const techniqueCoefficients = {
+      'sublimation': 1.00,
+      'dtf': 1.12,
+      'dtf-v': 1.25,
+      'vinyl': 0.95
+    };
+
+    function calculate() {
+      const name = Q('#productName').value.trim() || 'Producto';
+      const base = parseFloat(Q('#costBase').value) || 0;
+      const paper = parseFloat(Q('#costPaper').value) || 0;
+      const tintaMl = parseFloat(Q('#tintaMl').value) || 0;
+      const costTintaMl = parseFloat(Q('#costTintaMl').value) || 0;
+      const timeMin = parseFloat(Q('#timeMin').value) || 0;
+      const laborHour = parseFloat(Q('#costLaborHour').value) || 0;
+      const energyHour = parseFloat(Q('#costEnergyHour').value) || 0;
+      const other = parseFloat(Q('#otherCost').value) || 0;
+      const technique = Q('#technique').value;
+      const marginPct = parseFloat(Q('#marginPct').value) || 0;
+
+      // componentes
+      const costTinta = tintaMl * costTintaMl;
+      const laborUnit = (timeMin / 60) * laborHour;
+      const energyUnit = (timeMin / 60) * energyHour;
+
+      let costBaseUnit = base + paper + costTinta + laborUnit + energyUnit + other;
+
+      // aplicar coeficiente de técnica
+      const coef = techniqueCoefficients[technique] || 1;
+      costBaseUnit = costBaseUnit * coef;
+
+      // precios sugeridos
+      const priceByMargin = costBaseUnit * (1 + marginPct / 100);
+
+      // precios recomendados
+      const priceRec1 = costBaseUnit * 1.30; // 30% margen
+      const priceRec2 = costBaseUnit * 1.50; // 50% margen
+      const priceRec3 = costBaseUnit * 2.00; // premium 100% margen
+
+      // show
+      Q('#unitCost').textContent = '$ ' + format(costBaseUnit);
+      Q('#priceSuggested').textContent = '$ ' + format(priceByMargin);
+      Q('#priceRec').textContent = '$' + format(priceRec1) + ' / $' + format(priceRec2) + ' / $' + format(priceRec3);
+
+      // quick last
+      Q('#quickLast').textContent = `${name} • Costo: $${format(costBaseUnit)} • Precio sugerido: $${format(priceByMargin)}`;
+
+      return {
+        timestamp: new Date().toISOString(),
+        name,
+        technique,
+        costBase: round(base),
+        paper: round(paper),
+        costTinta,
+        laborUnit: round(laborUnit),
+        energyUnit: round(energyUnit),
+        other: round(other),
+        coef,
+        unitCost: round(costBaseUnit),
+        marginPct,
+        priceSuggested: round(priceByMargin)
+      };
+    }
+
+    function round(v) { return Math.round((v + Number.EPSILON) * 100) / 100; }
+
+    function saveCalc(obj) {
+      const key = 'dirco_calcs_v1';
+      const cur = JSON.parse(localStorage.getItem(key) || '[]');
+      cur.unshift(obj);
+      // cap historial a 100 items
+      localStorage.setItem(key, JSON.stringify(cur.slice(0, 100)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const key = 'dirco_calcs_v1';
+      const cur = JSON.parse(localStorage.getItem(key) || '[]');
+      const wrap = Q('#historyWrap');
+      if (!cur.length) {
+        wrap.innerHTML = '<div class="history-empty">No hay cálculos guardados.</div>';
+        Q('#exportCsv').disabled = true;
+        Q('#clearHistory').disabled = true;
+        return;
+      }
+      Q('#exportCsv').disabled = false;
+      Q('#clearHistory').disabled = false;
+
+      let html = '<table><thead><tr><th>Fecha</th><th>Producto</th><th>Técnica</th><th>Costo</th><th>Precio sugerido</th></tr></thead><tbody>';
+      cur.forEach(it => {
+        html += `<tr>
+      <td>${new Date(it.timestamp).toLocaleString()}</td>
+      <td>${escapeHtml(it.name)}</td>
+      <td>${escapeHtml(it.technique)}</td>
+      <td>$ ${format(it.unitCost)}</td>
+      <td>$ ${format(it.priceSuggested)}</td>
+    </tr>`;
+      });
+      html += '</tbody></table>';
+      wrap.innerHTML = html;
+    }
+
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+
+    function exportCsv() {
+      const key = 'dirco_calcs_v1';
+      const cur = JSON.parse(localStorage.getItem(key) || '[]');
+      if (!cur.length) { alert('No hay datos para exportar.'); return; }
+      const headers = ['timestamp', 'name', 'technique', 'unitCost', 'priceSuggested'];
+      const rows = cur.map(r => [r.timestamp, r.name, r.technique, r.unitCost, r.priceSuggested]);
+      const csv = [headers.join(','), ...rows.map(r => r.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dirco_calculadora_historial.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    /* init */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHistory();
+
+      Q('#calcBtn').addEventListener('click', () => {
+        const obj = calculate();
+        // small animation: flash result
+        Q('#unitCost').style.opacity = 0.6;
+        setTimeout(() => Q('#unitCost').style.opacity = 1, 200);
+      });
+
+      Q('#saveBtn').addEventListener('click', () => {
+        const obj = calculate();
+        saveCalc(obj);
+        alert('Cálculo guardado en historial.');
+      });
+
+      Q('#resetBtn').addEventListener('click', () => {
+        if (!confirm('Restablecer todos los campos a valores por defecto?')) return;
+        Q('#productName').value = '';
+        Q('#costBase').value = '8.00';
+        Q('#costPaper').value = '0.50';
+        Q('#tintaMl').value = '5';
+        Q('#costTintaMl').value = '0.10';
+        Q('#timeMin').value = '12';
+        Q('#costLaborHour').value = '8.00';
+        Q('#costEnergyHour').value = '0.50';
+        Q('#otherCost').value = '0.20';
+        Q('#marginPct').value = '30';
+        Q('#technique').value = 'sublimation';
+        Q('#unitCost').textContent = '--';
+        Q('#priceSuggested').textContent = '--';
+        Q('#priceRec').textContent = '--';
+      });
+
+      Q('#exportCsv').addEventListener('click', exportCsv);
+      Q('#clearHistory').addEventListener('click', () => {
+        if (!confirm('Borrar todo el historial?')) return;
+        localStorage.removeItem('dirco_calcs_v1');
+        renderHistory();
+      });
+
+      // quick calculate on Enter in fields
+      document.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('keydown', e => {
+          if (e.key === 'Enter') { e.preventDefault(); Q('#calcBtn').click(); }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
