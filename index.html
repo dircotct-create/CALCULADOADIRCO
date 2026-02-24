@@ -318,6 +318,12 @@ select{cursor:pointer}
   padding:6px 10px;background:var(--bg2);border-radius:6px;
   color:var(--txt2);margin-bottom:6px;line-height:1.5;
 }
+/* helper text below inputs */
+.hint{
+  font-size:11px;color:var(--txt2);margin-top:4px;line-height:1.5;
+  display:flex;align-items:flex-start;gap:4px;
+}
+.hint::before{content:'ⓘ';font-size:11px;flex-shrink:0;opacity:.6}
 
 /* ─── PRINT STYLES ────────────────────────────────── */
 @media print{
@@ -428,6 +434,19 @@ select{cursor:pointer}
 
 <!-- ─── MAIN CONTAINER ────────────────────────── -->
 <main class="container">
+
+<!-- Welcome banner -->
+<div style="background:linear-gradient(135deg,var(--accent-glow),transparent);border:1px solid var(--accent);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px" class="no-print">
+  <div style="font-size:28px;flex-shrink:0">🧮</div>
+  <div>
+    <div style="font-weight:700;font-size:14px;margin-bottom:3px">Bienvenido a DIRCO Pro</div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.6">
+      Completa las secciones de arriba hacia abajo, presiona <strong>⚡ Calcular Precio</strong> y obtendrás el costo real y el precio de venta sugerido para tu producto personalizado.
+      Todos los datos se guardan en tu navegador — <strong>nada sale a internet</strong>.
+    </div>
+  </div>
+</div>
+
 <div class="grid-main">
 
 <!-- LEFT COLUMN -->
@@ -439,6 +458,9 @@ select{cursor:pointer}
       <div class="card-title"><span class="icon">⚡</span> Carga Rápida de Insumos</div>
     </div>
     <div class="card-body">
+      <p style="font-size:12px;color:var(--txt2);margin-bottom:14px;line-height:1.6;padding:10px 14px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--accent)">
+        Haz clic en un producto para prellenar todos los campos con valores estándar de referencia. Puedes ajustar cualquier número después según tus costos reales.
+      </p>
       <div class="presets-row">
         <button class="preset-chip" onclick="loadPreset('camiseta')">👕 Camiseta Algodón</button>
         <button class="preset-chip" onclick="loadPreset('polo')">🎽 Polo Poliéster</button>
@@ -450,6 +472,7 @@ select{cursor:pointer}
       <div class="field">
         <label>Nombre del Producto</label>
         <input id="productName" type="text" placeholder="Ej: Camiseta poliéster blanca talla M">
+        <div class="hint">Dale un nombre claro para identificarlo en tu historial y cotizaciones. Puedes usar los botones de arriba para prellenar los campos.</div>
       </div>
     </div>
   </div>
@@ -459,7 +482,7 @@ select{cursor:pointer}
     <div class="card-header">
       <div class="card-title"><span class="icon">📦</span> 1 · Costos del Producto</div>
       <div style="display:flex;align-items:center;gap:10px">
-        <select id="currency" class="btn btn-secondary btn-sm" style="padding:5px 10px;width:auto">
+        <select id="currency" class="btn btn-secondary btn-sm" style="padding:5px 10px;width:auto" title="Selecciona la moneda en la que llevas tus costos">
           <option value="USD">$ USD</option>
           <option value="COP">$ COP</option>
           <option value="MXN">$ MXN</option>
@@ -472,6 +495,9 @@ select{cursor:pointer}
       </div>
     </div>
     <div class="card-body">
+      <p style="font-size:12px;color:var(--txt2);margin-bottom:14px;line-height:1.6;padding:10px 14px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--accent)">
+        Ingresa lo que te cuesta producir <strong>una sola unidad</strong>. Si trabajas en COP o MXN, cambia la moneda arriba a la derecha. Usa números reales de tus facturas de compra.
+      </p>
       <div class="row-2">
         <div class="field">
           <label>Costo base del insumo (unidad)</label>
@@ -479,6 +505,7 @@ select{cursor:pointer}
             <span class="currency-prefix" id="sym1">$</span>
             <input id="costBase" type="number" min="0" step="0.01" value="8.00">
           </div>
+          <div class="hint">Lo que pagaste por la prenda, taza o sustrato sin decorar. Ej: camiseta blanca = $8.00</div>
         </div>
         <div class="field">
           <label>Costo papel / film por unidad</label>
@@ -486,6 +513,7 @@ select{cursor:pointer}
             <span class="currency-prefix" id="sym2">$</span>
             <input id="costPaper" type="number" min="0" step="0.01" value="0.50">
           </div>
+          <div class="hint">Papel de sublimación, film DTF o vinilo que consume cada pieza. Si no aplica, pon 0.</div>
         </div>
       </div>
 
@@ -493,6 +521,7 @@ select{cursor:pointer}
         <div class="field">
           <label>Consumo de tinta (ml / unidad)</label>
           <input id="tintaMl" type="number" min="0" step="0.1" value="5">
+          <div class="hint">Mililitros de tinta que usa cada impresión. Promedio sublimación A4 ≈ 4–6 ml. DTF ≈ 3–5 ml.</div>
         </div>
         <div class="field">
           <label>Costo tinta por ml</label>
@@ -500,6 +529,7 @@ select{cursor:pointer}
             <span class="currency-prefix" id="sym3">$</span>
             <input id="costTintaMl" type="number" min="0" step="0.01" value="0.10">
           </div>
+          <div class="hint">Divide el precio de tu botella de tinta entre su volumen en ml. Ej: $50 / 500ml = $0.10/ml.</div>
         </div>
       </div>
 
@@ -510,10 +540,12 @@ select{cursor:pointer}
             <span class="currency-prefix" id="sym4">$</span>
             <input id="otherCost" type="number" min="0" step="0.01" value="0.20">
           </div>
+          <div class="hint">Bolsas, etiquetas, empaque, envío local u otros consumibles por pieza.</div>
         </div>
         <div class="field">
           <label>Tasa de cambio <span style="font-weight:400;color:var(--txt2)">(1 USD = ?)</span></label>
           <input id="exchangeRate" type="number" min="0.01" step="0.01" value="1.00">
+          <div class="hint">Solo si compraste insumos en otra moneda. Ej: si trabajas en COP y el insumo costó USD, pon la tasa aquí. Si no aplica, deja 1.00.</div>
         </div>
       </div>
     </div>
@@ -525,18 +557,24 @@ select{cursor:pointer}
       <div class="card-title"><span class="icon">⏱</span> 2 · Mano de Obra & Tiempo</div>
     </div>
     <div class="card-body">
+      <p style="font-size:12px;color:var(--txt2);margin-bottom:14px;line-height:1.6;padding:10px 14px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--accent)">
+        Tu tiempo vale dinero. Esta sección convierte los minutos que inviertes en cada pieza a un costo real. Si eres el único operario, pon tu propia tarifa de mano de obra.
+      </p>
       <div class="row-3">
         <div class="field">
           <label>Tiempo de trabajo (min)</label>
           <input id="timeMin" type="number" min="0" step="1" value="12">
+          <div class="hint">Minutos totales que tardas en hacer una unidad: diseño, impresión y acabado. Ej: sublimación simple ≈ 12 min.</div>
         </div>
         <div class="field">
           <label>Mano de obra ($/hora)</label>
           <input id="costLaborHour" type="number" min="0" step="0.01" value="8.00">
+          <div class="hint">Tu tarifa por hora o la del operario.</div>
         </div>
         <div class="field">
           <label>Energía / máquina ($/hora)</label>
           <input id="costEnergyHour" type="number" min="0" step="0.01" value="0.50">
+          <div class="hint">Costo eléctrico de la prensa, impresora o ploter por hora. Prensa 1500W ≈ $0.15–0.50/h según tarifa.</div>
         </div>
       </div>
     </div>
@@ -548,24 +586,31 @@ select{cursor:pointer}
       <div class="card-title"><span class="icon">🏭</span> 3 · Costos Fijos Mensuales (Overhead)</div>
     </div>
     <div class="card-body">
+      <p style="font-size:12px;color:var(--txt2);margin-bottom:14px;line-height:1.6;padding:10px 14px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--accent)">
+        Los costos fijos existen aunque no vendas nada. Esta sección los distribuye automáticamente entre cada minuto de producción para que no salgas perdiendo. <strong>Si trabajas desde casa y no tienes gastos fijos de taller, puedes dejar todo en 0.</strong>
+      </p>
       <div class="row-3">
         <div class="field">
           <label>Renta / local ($/mes)</label>
           <input id="ohRent" type="number" min="0" step="1" value="0">
+          <div class="hint">Lo que pagas de arriendo o alquiler del taller cada mes. Si trabajas en casa, puedes poner una fracción proporcional.</div>
         </div>
         <div class="field">
           <label>Luz / servicios ($/mes)</label>
           <input id="ohUtils" type="number" min="0" step="1" value="0">
+          <div class="hint">Factura de electricidad, agua e internet mensual del negocio. Solo la parte que corresponde al taller.</div>
         </div>
         <div class="field">
           <label>Suscripciones / otros ($/mes)</label>
           <input id="ohSubs" type="number" min="0" step="1" value="0">
+          <div class="hint">Adobe, Corel, plataformas de diseño, seguros, contador, publicidad mensual u otros gastos fijos del negocio.</div>
         </div>
       </div>
       <div class="row-2">
         <div class="field">
           <label>Horas de trabajo al mes</label>
           <input id="ohHoursMonth" type="number" min="1" step="1" value="160">
+          <div class="hint">Cuántas horas al mes produce tu taller. Jornada completa ≈ 160 h. Medio tiempo ≈ 80 h. Usa tus horas reales.</div>
         </div>
         <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end">
           <div class="overhead-meta" style="margin-top:0" id="ohMeta">
@@ -582,6 +627,9 @@ select{cursor:pointer}
       <div class="card-title"><span class="icon">🎯</span> 4 · Técnica, Margen & Impuestos</div>
     </div>
     <div class="card-body">
+      <p style="font-size:12px;color:var(--txt2);margin-bottom:14px;line-height:1.6;padding:10px 14px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--accent)">
+        Aquí defines <strong>cuánto ganarás</strong>. El coeficiente de técnica ajusta el costo según la complejidad del proceso. El margen es tu ganancia. El IVA es el impuesto que cobras al cliente final (tú lo pagas al gobierno).
+      </p>
       <div class="row-2">
         <div class="field">
           <label>Técnica de impresión</label>
@@ -593,29 +641,33 @@ select{cursor:pointer}
             <option value="screen">Serigrafía (coef. ×1.08)</option>
             <option value="embroidery">Bordado (coef. ×1.35)</option>
           </select>
-          <div class="formula-item" style="margin-top:6px;font-size:11px">coeficiente ajusta acabado y desperdicios de técnica</div>
+          <div class="hint">El coeficiente ajusta el costo según el desperdicio, complejidad y acabado de cada técnica. Sublimación = base. Bordado = más mano de obra, por eso ×1.35.</div>
         </div>
         <div class="field">
           <label>Margen de ganancia (%)</label>
           <input id="marginPct" type="number" min="0" step="1" value="30">
+          <div class="hint">Tu ganancia sobre el costo. Mínimo recomendado: 30% retail, 20% mayorista. No incluye IVA (ese va aparte).</div>
         </div>
       </div>
       <div class="row-2">
         <div class="field">
           <label>IVA / Tax (%)</label>
           <input id="taxPct" type="number" min="0" step="0.1" value="0">
+          <div class="hint">El impuesto al valor agregado de tu país. Colombia = 19%, México = 16%, USA varía por estado. Deja en 0 si eres régimen simplificado o no aplica.</div>
         </div>
         <div class="field">
-          <label>Descuento máx. volumen (%)</label>
+          <label>Descuento máx. por volumen (%)</label>
           <input id="volDiscMax" type="number" min="0" max="60" step="1" value="20">
+          <div class="hint">El mayor descuento que darás en pedidos grandes (500 uds). La tabla de volumen distribuye este % progresivamente entre las cantidades.</div>
         </div>
       </div>
 
       <div class="actions-row">
         <button class="btn btn-primary" id="calcBtn">⚡ Calcular Precio</button>
-        <button class="btn btn-secondary" id="saveBtn">💾 Guardar</button>
+        <button class="btn btn-secondary" id="saveBtn">💾 Guardar en Historial</button>
         <button class="btn btn-ghost btn-sm" id="resetBtn">↩ Reset</button>
       </div>
+      <div class="hint" style="margin-top:10px">Calcula primero y luego guarda para agregar al historial. El CSV y la cotización usan los datos guardados o el cálculo más reciente.</div>
     </div>
   </div>
 
@@ -630,33 +682,43 @@ select{cursor:pointer}
         <div class="result-box">
           <div class="result-label">Costo Unitario</div>
           <div class="result-val mono" id="unitCost">—</div>
-          <div class="result-sub">sin margen</div>
+          <div class="result-sub">lo que te cuesta producirlo</div>
         </div>
         <div class="result-box highlight">
           <div class="result-label">Precio Sugerido</div>
           <div class="result-val accent" id="priceSuggested">—</div>
-          <div class="result-sub" id="marginLabel">+0% margen</div>
+          <div class="result-sub" id="marginLabel">tu precio de venta</div>
         </div>
         <div class="result-box">
-          <div class="result-label">Con IVA</div>
+          <div class="result-label">Precio con IVA</div>
           <div class="result-val" id="priceWithTax">—</div>
-          <div class="result-sub" id="taxLabel">+0% IVA</div>
+          <div class="result-sub" id="taxLabel">lo que paga el cliente</div>
         </div>
       </div>
+      <p style="font-size:11px;color:var(--txt2);margin-top:10px;line-height:1.6;padding:8px 12px;background:var(--bg2);border-radius:6px">
+        📌 <strong>Costo Unitario</strong> = todo lo que gastas por pieza (materiales + tiempo + overhead + técnica). <strong>Precio Sugerido</strong> = costo + tu margen de ganancia. <strong>Con IVA</strong> = precio final que cobras al cliente, incluyendo el impuesto.
+      </p>
 
       <div class="breakdown" id="breakdownWrap">
         <!-- filled by JS -->
       </div>
 
-      <div class="section-sep">Precios Rápidos</div>
-      <div style="display:flex;gap:8px;font-size:12px;color:var(--txt2)">
-        <span id="price30" class="tag tag-orange" style="font-size:12px">—</span>
-        <span id="price50" class="tag tag-green" style="font-size:12px">—</span>
-        <span id="price100" class="tag" style="font-size:12px">—</span>
+      <div class="section-sep">Precios Rápidos de Referencia</div>
+      <p style="font-size:11px;color:var(--txt2);margin-bottom:10px;line-height:1.5">Tres escenarios de margen sobre el costo unitario — úsalos para comparar y decidir tu precio retail:</p>
+      <div style="display:flex;gap:8px;font-size:12px;color:var(--txt2);flex-wrap:wrap">
+        <span id="price30" class="tag tag-orange" style="font-size:12px" title="Margen 30% — mínimo recomendado">—</span>
+        <span id="price50" class="tag tag-green" style="font-size:12px" title="Margen 50% — precio retail estándar">—</span>
+        <span id="price100" class="tag" style="font-size:12px" title="Margen 100% — precio premium o urgente">—</span>
       </div>
+      <p style="font-size:11px;color:var(--txt2);margin-top:8px;line-height:1.5">
+        🟠 <strong>+30%</strong> mínimo mayorista · 🟢 <strong>+50%</strong> retail estándar · ⚫ <strong>+100%</strong> precio premium
+      </p>
 
       <!-- VOLUME TABLE -->
       <div class="section-sep">Precios por Volumen</div>
+      <p style="font-size:11px;color:var(--txt2);margin-bottom:10px;line-height:1.5">
+        Cuánto cobrar según la cantidad del pedido. El descuento se aplica progresivamente hasta el máximo que configuraste arriba. El precio ya incluye tu margen e IVA.
+      </p>
       <table class="vol-table">
         <thead>
           <tr>
@@ -671,19 +733,23 @@ select{cursor:pointer}
     </div>
   </div>
 
-  <!-- EXPORT / HISTORY -->
   <div class="card">
     <div class="card-header">
       <div class="card-title"><span class="icon">📁</span> Historial & Exportar</div>
     </div>
     <div class="card-body">
+      <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--txt2);line-height:1.7;border:1px solid var(--border)">
+        💾 <strong>¿Cómo guardar?</strong> Haz clic en <strong>"⚡ Calcular Precio"</strong> y luego en <strong>"💾 Guardar"</strong> para agregar el cálculo al historial.<br>
+        📄 <strong>CSV:</strong> abre en Excel o Google Sheets para llevar contabilidad de todos tus productos.<br>
+        🖨 <strong>Cotización:</strong> genera un presupuesto listo para enviarle a tu cliente o imprimir.
+      </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
         <button class="btn btn-secondary btn-sm" id="exportCsv">📄 Exportar CSV</button>
         <button class="btn btn-secondary btn-sm no-print" id="btnQuote2">🖨 Cotización PDF</button>
         <button class="btn btn-ghost btn-sm" id="clearHistory">🗑 Borrar todo</button>
       </div>
       <div id="historyWrap">
-        <div class="hist-empty">No hay cálculos guardados.</div>
+        <div class="hist-empty">No hay cálculos guardados.<br><span style="font-size:11px">Calcula y presiona 💾 Guardar para ver el historial aquí.</span></div>
       </div>
     </div>
   </div>
@@ -993,16 +1059,24 @@ function renderHistory(){
 
 /* ─── CSV EXPORT ─────────────────────────────── */
 function exportCsv(){
-  const cur = getHistory();
-  if(!cur.length){ alert('No hay datos para exportar.'); return; }
-  const headers = ['Fecha','Producto','Tecnica','Moneda','CostoUnitario','PrecioMargen','PrecioConIVA','Margen%','IVA%'];
+  let cur = getHistory();
+  // If no history but we have a current calculation, export that
+  if(!cur.length && lastResult){
+    cur = [lastResult];
+  }
+  if(!cur.length){
+    alert('No hay datos para exportar.\n\nPrimero haz un cálculo con ⚡ Calcular Precio.');
+    return;
+  }
+  const headers = ['Fecha','Producto','Tecnica','Moneda','CostoUnitario','PrecioMargen','PrecioConIVA','Margen%','IVA%','CoeficienteTecnica'];
   const rows = cur.map(r => [
     new Date(r.timestamp).toLocaleString(),
     r.name, r.technique, r.currency||'USD',
     r.unitCost, r.priceByMargin, r.priceWithTax||r.priceByMargin,
-    r.marginPct, r.taxPct||0
+    r.marginPct, r.taxPct||0, r.coef||1
   ]);
-  const csv = [headers.join(','), ...rows.map(row => row.map(f=>`"${String(f).replace(/"/g,'""')}"`).join(','))].join('\n');
+  const BOM = '\uFEFF'; // UTF-8 BOM for Excel compatibility
+  const csv = BOM + [headers.join(';'), ...rows.map(row => row.map(f=>`"${String(f).replace(/"/g,'""')}"`).join(';'))].join('\n');
   const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
@@ -1117,8 +1191,8 @@ document.addEventListener('DOMContentLoaded', () => {
     saveCalc(lastResult);
     // flash button
     const btn = $('#saveBtn');
-    btn.textContent = '✅ Guardado';
-    setTimeout(() => btn.textContent = '💾 Guardar', 1500);
+    btn.textContent = '✅ ¡Guardado!';
+    setTimeout(() => btn.textContent = '💾 Guardar en Historial', 2000);
   });
 
   $('#resetBtn').addEventListener('click', resetForm);
